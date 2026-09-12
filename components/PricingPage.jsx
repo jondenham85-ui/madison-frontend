@@ -1,3 +1,5 @@
-export default function PricingPage() {
-  return <div>Pricing Page</div>;
+import PricingPage from "../../../components/PricingPage";
+
+export default function Page() {
+  return <PricingPage />;
 }
