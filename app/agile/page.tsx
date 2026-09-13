@@ -1,14 +1,19 @@
 "use client";
 import { useState } from "react";
 
+interface Task {
+  name: string;
+  status: "Backlog" | "In Progress" | "Done";
+}
+
 export default function AgileBoard() {
-  const [tasks, setTasks] = useState([
+  const [tasks, setTasks] = useState<Task[]>([
     { name: "Initialize sprint", status: "Backlog" },
     { name: "Run daily standup", status: "In Progress" },
     { name: "Complete sprint review", status: "Done" }
   ]);
 
-  const moveTask = (index, newStatus) => {
+  const moveTask = (index: number, newStatus: "Backlog" | "In Progress" | "Done") => {
     const updated = [...tasks];
     updated[index].status = newStatus;
     setTasks(updated);
