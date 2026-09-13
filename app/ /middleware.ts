@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(req) {
+export function middleware(req: NextRequest) {
   const ownerEmails = [
     "jondenham85@gmail.com",
     "allydenham013@gmail.com"
@@ -8,7 +8,7 @@ export function middleware(req) {
 
   const email = req.cookies.get("owner_email")?.value;
 
-  const isOwner = ownerEmails.includes(email);
+  const isOwner = ownerEmails.includes(email as string);
 
   const isOwnerRoute = req.nextUrl.pathname.startsWith("/owner");
 
