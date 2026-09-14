@@ -1,16 +1,15 @@
-import React from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import Hero from "@/components/Hero";
-import Features from "@/components/Features";
+async function getBackendStatus() {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/health`,
+      { cache: "no-store" }
+    );
 
-export default function Home() {
-  return (
-    <main>
-      <Header />
-      <Hero />
-      <Features />
-      <Footer />
-    </main>
-  );
+    if (!res.ok) throw new Error("Failed");
+
+    const data = await res.json();
+    return { ok: true, message: data.message };
+  } catch {
+    return { ok: false, message: "Load failed" };
+  }
 }
