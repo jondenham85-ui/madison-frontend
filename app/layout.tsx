@@ -1,29 +1,19 @@
-"use client";
-
 import "./globals.css";
-import { ReactNode } from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "MAD Madison AI",
+  description: "MAD Madison App website + PWA",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#0CC7C7" />
-      </head>
-      <body
-        style={{
-          margin: 0,
-          padding: 0,
-          fontFamily: "Arial, sans-serif",
-          backgroundColor: "#ffffff",
-        }}
-      >
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
