@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
 import Footer from "@/components/Footer";
+import RevenueWidget from "@/components/RevenueWidget";
 import { useEffect, useState } from "react";
 
 export default function HomePage() {
@@ -37,6 +38,8 @@ export default function HomePage() {
       <Header />
       <Hero />
       <Features />
+
+      <RevenueWidget />
 
       <div style={{ padding: "20px", textAlign: "center" }}>
         <h3>Backend Status</h3>
