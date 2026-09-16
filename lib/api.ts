@@ -2,7 +2,8 @@
  * API client for Madison Backend communication
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://madison-backend-7lvr.onrender.com';
+
 
 export interface BackendHealth {
   status: string;
