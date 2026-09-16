@@ -1,20 +1,44 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export function middleware(req: NextRequest) {
-  const ownerEmails = [
-    "jondenham85@gmail.com",
-    "allydenham013@gmail.com"
-  ];
+export async function middleware(req: any) {
+  const url = req.nextUrl.clone();
+  const path = url.pathname;
 
-  const email = req.cookies.get("owner_email")?.value;
+  // Only protect /owner routes
+  const isOwnerRoute = path.startsWith("/owner");
 
-  const isOwner = ownerEmails.includes(email as string);
+  if (!isOwnerRoute) {
+    return NextResponse.next();
+  }
 
-  const isOwnerRoute = req.nextUrl.pathname.startsWith("/owner");
+  // Read owner token from cookies
+  const token = req.cookies.get("owner_token")?.value;
 
-  if (isOwnerRoute && !isOwner) {
-    return NextResponse.redirect(new URL("/", req.url));
+  if (!token) {
+    url.pathname = "/owner/login";
+    return NextResponse.redirect(url);
+  }
+
+  // Validate token with your Render backend
+  const validate = await fetch(
+    `${process.env.BACKEND_URL}/auth/owner/validate`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    }
+  );
+
+  const data = await validate.json();
+
+  if (!data.valid) {
+    url.pathname = "/owner/login";
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: ["/owner/:path*"],
+};
