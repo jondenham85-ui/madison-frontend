@@ -1,9 +1,25 @@
-import { getBackendHealth, getDiagnostic, getOwnerStatus } from "@/api/backend";
+"use client";
 
-export default async function Page() {
-  const health = await getBackendHealth();
-  const diagnostic = await getDiagnostic();
-  const owner = await getOwnerStatus();
+import { useEffect, useState } from "react";
+import { 
+  getBackendHealth, 
+  getDiagnostic, 
+  getOwnerStatus 
+} from "@/api/backend";
+
+export default function Page() {
+  const [health, setHealth] = useState(null);
+  const [diagnostic, setDiagnostic] = useState(null);
+  const [owner, setOwner] = useState(null);
+
+  useEffect(() => {
+    async function load() {
+      setHealth(await getBackendHealth());
+      setDiagnostic(await getDiagnostic());
+      setOwner(await getOwnerStatus());
+    }
+    load();
+  }, []);
 
   return (
     <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
