@@ -1,15 +1,44 @@
-async function getBackendStatus() {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/health`,
-      { cache: "no-store" }
-    );
+"use client";
 
-    if (!res.ok) throw new Error("Failed");
+import { useEffect, useState } from "react";
+import { 
+  getBackendHealth, 
+  getDiagnostic, 
+  getOwnerStatus 
+} from "@/api/backend";
 
-    const data = await res.json();
-    return { ok: true, message: data.message };
-  } catch {
-    return { ok: false, message: "Load failed" };
-  }
+export default function ClientHome() {
+  const [health, setHealth] = useState(null);
+  const [diagnostic, setDiagnostic] = useState(null);
+  const [owner, setOwner] = useState(null);
+
+  useEffect(() => {
+    async function load() {
+      setHealth(await getBackendHealth());
+      setDiagnostic(await getDiagnostic());
+      setOwner(await getOwnerStatus());
+    }
+    load();
+  }, []);
+
+  return (
+    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+      <h1>MAD Madison System Status</h1>
+
+      <section>
+        <h2>Backend Health</h2>
+        <pre>{JSON.stringify(health, null, 2)}</pre>
+      </section>
+
+      <section>
+        <h2>System Diagnostic</h2>
+        <pre>{JSON.stringify(diagnostic, null, 2)}</pre>
+      </section>
+
+      <section>
+        <h2>Owner Status</h2>
+        <pre>{JSON.stringify(owner, null, 2)}</pre>
+      </section>
+    </main>
+  );
 }
