@@ -1,136 +1,173 @@
-/* --------------------------------------------------
-   MAD Madison AI — Global Production Styles
-   Mobile‑first, fast, clean, teal/turquoise identity
--------------------------------------------------- */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Reset & base */
-* {
+/* -------------------------------------------------- */
+/* MADISON HOLOGRAM THEME — FULL GLOBALS.CSS          */
+/* -------------------------------------------------- */
+
+/* Base reset enhancements */
+html, body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
+  background: #000;
+  color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
-  background: #ffffff;
-  color: #111;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Smooth animations everywhere */
-:root {
-  --mad-teal: #00c4b4;
-  --mad-dark: #0d0d0d;
-  --mad-light: #f7f7f7;
-  --mad-radius: 10px;
-  --mad-transition: 0.25s ease;
+/* -------------------------------------------------- */
+/* HOLOGRAM GLOW EFFECTS                              */
+/* -------------------------------------------------- */
+
+.hologram-glow {
+  box-shadow: 0 0 25px #00e5ff;
 }
 
-/* Links */
-a {
-  color: var(--mad-teal);
-  text-decoration: none;
-  transition: var(--mad-transition);
+.hologram-glow-strong {
+  box-shadow: 0 0 45px #00e5ff;
 }
 
-a:hover {
-  opacity: 0.7;
+/* -------------------------------------------------- */
+/* HOLOGRAM PULSE                                     */
+/* -------------------------------------------------- */
+
+@keyframes holoPulse {
+  0% { opacity: 0.65; }
+  50% { opacity: 1; }
+  100% { opacity: 0.65; }
 }
 
-/* Buttons */
-button {
-  background: var(--mad-teal);
-  color: #fff;
-  border: none;
-  padding: 14px 22px;
-  font-size: 18px;
-  border-radius: var(--mad-radius);
-  cursor: pointer;
-  transition: var(--mad-transition);
+.holo-pulse {
+  animation: holoPulse 2.5s infinite ease-in-out;
 }
 
-button:hover {
-  transform: translateY(-2px);
-  opacity: 0.9;
+/* -------------------------------------------------- */
+/* HOLOGRAM FLICKER                                   */
+/* -------------------------------------------------- */
+
+@keyframes holoFlicker {
+  0% { opacity: 1; }
+  50% { opacity: 0.85; }
+  100% { opacity: 1; }
 }
 
-/* Cards */
-.mad-card {
-  background: var(--mad-light);
-  padding: 20px;
-  border-radius: var(--mad-radius);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: var(--mad-transition);
+.holo-flicker {
+  animation: holoFlicker 4s infinite;
 }
 
-.mad-card:hover {
-  transform: translateY(-2px);
+/* -------------------------------------------------- */
+/* PARTICLE SHIMMER                                   */
+/* -------------------------------------------------- */
+
+@keyframes shimmer {
+  0% { opacity: 0.2; }
+  50% { opacity: 0.4; }
+  100% { opacity: 0.2; }
 }
 
-/* Typography */
-h1, h2, h3, h4 {
-  font-weight: 600;
-  margin-bottom: 12px;
+.shimmer {
+  animation: shimmer 6s infinite;
 }
 
-p {
-  line-height: 1.5;
-  margin-bottom: 12px;
+/* -------------------------------------------------- */
+/* HOLOGRAM GRID BACKGROUND                           */
+/* -------------------------------------------------- */
+
+.hologram-grid {
+  background-image:
+    linear-gradient(#00e5ff22 1px, transparent 1px),
+    linear-gradient(90deg, #00e5ff22 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
-/* Layout helpers */
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* -------------------------------------------------- */
+/* BLACK GLASS PANELS                                 */
+/* -------------------------------------------------- */
+
+.glass-panel {
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  box-shadow: 0 0 25px #00e5ff33;
 }
 
-.column {
-  display: flex;
-  flex-direction: column;
+/* -------------------------------------------------- */
+/* NEON TEXT                                           */
+/* -------------------------------------------------- */
+
+.neon-text {
+  color: #00e5ff;
+  text-shadow: 0 0 15px #00e5ff;
 }
 
-/* PWA install banner */
-.pwa-banner {
-  background: var(--mad-teal);
-  color: #fff;
-  padding: 16px;
-  border-radius: var(--mad-radius);
-  text-align: center;
-  margin: 20px 0;
+/* -------------------------------------------------- */
+/* NEON BORDER                                         */
+/* -------------------------------------------------- */
+
+.neon-border {
+  border: 1px solid #00e5ff;
+  box-shadow: 0 0 20px #00e5ff;
 }
 
-/* Mobile-first spacing */
-section {
-  padding: 20px;
+/* -------------------------------------------------- */
+/* BUTTON GLOW                                         */
+/* -------------------------------------------------- */
+
+.btn-glow {
+  box-shadow: 0 0 25px #00e5ff;
 }
 
-/* Animations */
-.fade-in {
-  animation: fadeIn 0.6s ease forwards;
+.btn-glow:hover {
+  box-shadow: 0 0 35px #00e5ff;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* -------------------------------------------------- */
+/* FUTURISTIC DESK REFLECTION                          */
+/* -------------------------------------------------- */
+
+.desk-reflect {
+  background: linear-gradient(
+    to right,
+    rgba(0, 229, 255, 0.4),
+    rgba(0, 0, 0, 0.8),
+    rgba(0, 229, 255, 0.4)
+  );
 }
 
-/* Dark mode (auto) */
-@media (prefers-color-scheme: dark) {
-  html, body {
-    background: var(--mad-dark);
-    color: #f2f2f2;
-  }
+/* -------------------------------------------------- */
+/* HOLOGRAM AURA                                       */
+/* -------------------------------------------------- */
 
-  .mad-card {
-    background: #1a1a1a;
-    box-shadow: 0 2px 8px rgba(255,255,255,0.05);
-  }
+.holo-aura {
+  background: radial-gradient(circle, #00e5ff66, #000000);
+  box-shadow: 0 0 55px #00e5ff;
+}
 
-  button {
-    background: var(--mad-teal);
-  }
+/* -------------------------------------------------- */
+/* AVATAR SILHOUETTE                                   */
+/* -------------------------------------------------- */
+
+.holo-avatar {
+  border: 1px solid rgba(0, 229, 255, 0.7);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+}
+
+/* -------------------------------------------------- */
+/* CUSTOM SCROLLBAR                                    */
+/* -------------------------------------------------- */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00e5ff55;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
 }
