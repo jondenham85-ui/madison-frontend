@@ -1,44 +1,47 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { 
-  getBackendHealth, 
-  getDiagnostic, 
-  getOwnerStatus 
-} from "@/api/backend";
+import Header from "../components/Header";
+import Hero from "../components/Hero";
+import Features from "../components/Features";
+import Footer from "../components/Footer";
 
 export default function Page() {
-  const [health, setHealth] = useState(null);
-  const [diagnostic, setDiagnostic] = useState(null);
-  const [owner, setOwner] = useState(null);
-
-  useEffect(() => {
-    async function load() {
-      setHealth(await getBackendHealth());
-      setDiagnostic(await getDiagnostic());
-      setOwner(await getOwnerStatus());
-    }
-    load();
-  }, []);
-
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>MAD Madison System Status</h1>
+    <main className="flex flex-col min-h-screen bg-white text-black">
 
-      <section>
-        <h2>Backend Health</h2>
-        <pre>{JSON.stringify(health, null, 2)}</pre>
+      {/* Header */}
+      <Header />
+
+      {/* Hero Section */}
+      <section className="w-full">
+        <Hero />
       </section>
 
-      <section>
-        <h2>System Diagnostic</h2>
-        <pre>{JSON.stringify(diagnostic, null, 2)}</pre>
+      {/* Cash App Pay Buttons */}
+      {/* --------------------------------------------- */}
+      {/* Paste your Pay Buttons here */}
+      {/* Example:
+          <a href="https://cash.app/$MadMadisonAI/10" className="cash-button">
+            Pay $10 with Cash App
+          </a>
+      */}
+      {/* --------------------------------------------- */}
+
+      {/* Cash App Subscription Buttons */}
+      {/* --------------------------------------------- */}
+      {/* Paste your Subscription Buttons here */}
+      {/* Example:
+          <a href="https://cash.app/$MadMadisonAI?amount=10&subscription=true" className="cash-sub">
+            $10 Monthly Subscription
+          </a>
+      */}
+      {/* --------------------------------------------- */}
+
+      {/* Features Section */}
+      <section className="w-full mt-10">
+        <Features />
       </section>
 
-      <section>
-        <h2>Owner Status</h2>
-        <pre>{JSON.stringify(owner, null, 2)}</pre>
-      </section>
+      {/* Footer */}
+      <Footer />
     </main>
   );
 }
