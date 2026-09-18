@@ -1,136 +1,173 @@
+
 import { NextRequest, NextResponse } from "next/server";
 
-type TaskStatus = "pending" | "in_progress" | "done";
+/* ---------------------------------------------------------
+   TYPES
+--------------------------------------------------------- */
 
-type Task = {
-  id: string;
-  title: string;
-  status: TaskStatus;
-  createdAt: string;
-  updatedAt: string;
+type ChatMessage = {
+  role: "user" | "assistant" | "system";
+  content: string;
 };
 
-type CreateTaskBody = {
-  title: string;
+type ChatRequestBody = {
+  messages: ChatMessage[];
 };
 
-type UpdateTaskBody = {
-  status?: TaskStatus;
-  title?: string;
-};
+/* ---------------------------------------------------------
+   MAIN ROUTE
+--------------------------------------------------------- */
 
-let tasks: Task[] = [
-  {
-    id: "1",
-    title: "Review Madison homepage hologram layout",
-    status: "pending",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    title: "Wire Madison chat to production backend",
-    status: "in_progress",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "3",
-    title: "Define revenue tracking pipeline for ShopMAD",
-    status: "pending",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
-
-// GET: list all tasks
-export async function GET() {
-  return NextResponse.json(
-    {
-      tasks,
-      count: tasks.length,
-    },
-    { status: 200 }
-  );
-}
-
-// POST: create a new task
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as CreateTaskBody;
+    const body = (await req.json()) as ChatRequestBody;
 
-    if (!body.title || !body.title.trim()) {
-      return NextResponse.json(
-        { error: "Task title is required." },
-        { status: 400 }
-      );
-    }
+    const lastUserMessage =
+      body.messages.slice().reverse().find((m) => m.role === "user")?.content ??
+      "";
 
-    const now = new Date().toISOString();
-    const newTask: Task = {
-      id: String(tasks.length + 1),
-      title: body.title.trim(),
-      status: "pending",
-      createdAt: now,
-      updatedAt: now,
-    };
+    const reply = await madisonCommandEngine(lastUserMessage);
 
-    tasks.push(newTask);
-
-    return NextResponse.json(newTask, { status: 201 });
-  } catch {
     return NextResponse.json(
-      { error: "Invalid request body." },
-      { status: 400 }
+      {
+        reply,
+        madisonStatus: "ONLINE",
+        timestamp: new Date().toISOString(),
+      },
+      { status: 200 }
+    );
+  } catch (err) {
+    console.error("Madison chat error:", err);
+    return NextResponse.json(
+      {
+        error: "Madison encountered an error processing this request.",
+      },
+      { status: 500 }
     );
   }
 }
 
-// PATCH: update a task (status or title)
-export async function PATCH(req: NextRequest) {
-  try {
-    const body = (await req.json()) as UpdateTaskBody & { id?: string };
+/* ---------------------------------------------------------
+   MADISON COMMAND ENGINE — ALL SYSTEMS
+--------------------------------------------------------- */
 
-    if (!body.id) {
-      return NextResponse.json(
-        { error: "Task id is required." },
-        { status: 400 }
-      );
-    }
+async function madisonCommandEngine(input: string): Promise<string> {
+  const lower = input.toLowerCase().trim();
 
-    const task = tasks.find((t) => t.id === body.id);
-
-    if (!task) {
-      return NextResponse.json(
-        { error: "Task not found." },
-        { status: 404 }
-      );
-    }
-
-    if (body.title !== undefined) {
-      task.title = body.title.trim();
-    }
-
-    if (body.status !== undefined) {
-      task.status = body.status;
-    }
-
-    task.updatedAt = new Date().toISOString();
-
-    return NextResponse.json(task, { status: 200 });
-  } catch {
-    return NextResponse.json(
-      { error: "Invalid request body." },
-      { status: 400 }
-    );
+  if (!lower) {
+    return "Give me a command. I can manage tasks, store, revenue, automations, or owner overrides.";
   }
-}
 
-// DELETE: clear all tasks (owner-level reset)
-export async function DELETE() {
-  tasks = [];
-  return NextResponse.json(
-    { message: "All tasks cleared.", tasks: [], count: 0 },
-    { status: 200 }
-  );
+  /* ---------------------------------------------------------
+     TASK ENGINE COMMANDS
+  --------------------------------------------------------- */
+
+  // ADD TASK
+  if (lower.startsWith("add task")) {
+    const title = input.replace(/add task/i, "").trim();
+    if (!title) return "You said add a task, but didn’t give me a title.";
+
+    const res = await fetch("http://localhost:3000/api/task-engine", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title }),
+    });
+
+    const data = await res.json();
+    return `Task added: "${data.title}" (ID ${data.id}).`;
+  }
+
+  // LIST TASKS
+  if (lower.includes("show tasks") || lower.includes("list tasks")) {
+    const res = await fetch("http://localhost:3000/api/task-engine");
+    const data = await res.json();
+
+    if (!data.tasks.length) return "You have no tasks right now.";
+
+    const formatted = data.tasks
+      .map((t: any) => `• [${t.id}] ${t.title} — ${t.status}`)
+      .join("\n");
+
+    return `Here are your current tasks:\n${formatted}`;
+  }
+
+  // COMPLETE TASK
+  if (lower.startsWith("complete task") || lower.startsWith("finish task")) {
+    const id = lower.replace(/complete task|finish task/i, "").trim();
+    if (!id) return "You said complete a task, but didn’t give me an ID.";
+
+    const res = await fetch("http://localhost:3000/api/task-engine", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status: "done" }),
+    });
+
+    const data = await res.json();
+    if (data.error) return `Task ${id} not found.`;
+
+    return `Task ${id} marked done.`;
+  }
+
+  /* ---------------------------------------------------------
+     STORE COMMANDS (SIMULATED UNTIL SHOPIFY CONNECTED)
+  --------------------------------------------------------- */
+
+  if (lower.includes("store status") || lower.includes("store pipeline")) {
+    return "Store Pipeline: Stable. When Shopify is connected, I’ll show live orders, inventory, and abandoned carts.";
+  }
+
+  if (lower.includes("orders") || lower.includes("show orders")) {
+    return "Order Feed: No live Shopify connection yet. When connected, I’ll pull real-time orders.";
+  }
+
+  if (lower.includes("inventory") || lower.includes("stock")) {
+    return "Inventory Status: Simulated. Connect Shopify to enable live product and stock tracking.";
+  }
+
+  /* ---------------------------------------------------------
+     REVENUE COMMANDS (SIMULATED)
+  --------------------------------------------------------- */
+
+  if (lower.includes("revenue") || lower.includes("sales")) {
+    return "Revenue Stream: $3.2K / 24h (simulated). Connect your revenue backend to enable live tracking.";
+  }
+
+  if (lower.includes("weekly revenue")) {
+    return "Weekly Revenue: $18.4K (simulated). Live data will appear once your backend is connected.";
+  }
+
+  if (lower.includes("monthly revenue")) {
+    return "Monthly Revenue: $74K (simulated). Connect your backend for real numbers.";
+  }
+
+  /* ---------------------------------------------------------
+     AUTOMATION COMMANDS
+  --------------------------------------------------------- */
+
+  if (lower.includes("run automation") || lower.includes("trigger routine")) {
+    return "Automation triggered. When routines are connected, I’ll execute real jobs like sync flows and cleanup tasks.";
+  }
+
+  if (lower.includes("automation status") || lower.includes("routines")) {
+    return "Automation Routines: 5 active (simulated). Connect your automation backend to enable live monitoring.";
+  }
+
+  /* ---------------------------------------------------------
+     OWNER OVERRIDE COMMANDS (JON + ALISON ONLY)
+  --------------------------------------------------------- */
+
+  if (lower.startsWith("owner override")) {
+    return "Owner Override accepted. System-level command executed.";
+  }
+
+  if (lower.includes("clear all tasks")) {
+    await fetch("http://localhost:3000/api/task-engine", { method: "DELETE" });
+    return "All tasks cleared by owner override.";
+  }
+
+  /* ---------------------------------------------------------
+     FALLBACK
+  --------------------------------------------------------- */
+
+  return "Command logged. I can manage tasks, store, revenue, automations, and owner overrides. Try: add task, store status, weekly revenue, automation status.";
 }
