@@ -100,4 +100,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </import MadisonChat from "./components/MadisonChat";
+      </section>
+    </main>
+  );
+}

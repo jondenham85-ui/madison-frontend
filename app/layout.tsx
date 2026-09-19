@@ -1,4 +1,5 @@
 import "./globals.css";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata = {
   title: "MadMadisonAI",
@@ -15,6 +16,7 @@ export default function RootLayout({ children }) {
         "
       >
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
