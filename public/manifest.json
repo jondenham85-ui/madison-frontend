@@ -1,10 +1,10 @@
 {
-  "name": "Madison AI",
-  "short_name": "MadisonAI",
+  "name": "MAD Madison AI",
+  "short_name": "Mad Madison",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0CC7C7",
-  "theme_color": "#0CC7C7",
+  "background_color": "#000000",
+  "theme_color": "#00e6e6",
   "icons": [
     {
       "src": "/icons/icon-192.png",
