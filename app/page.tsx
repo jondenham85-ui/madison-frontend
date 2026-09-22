@@ -1,103 +1,277 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 export default function Home() {
+  // PWA install prompt
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showAndroidButton, setShowAndroidButton] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  // Detect standalone mode for banner
+  const [isStandalone, setIsStandalone] = useState(false);
+  const [bannerVisible, setBannerVisible] = useState(true);
+
+  useEffect(() => {
+    // Register service worker
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/service-worker.js");
+    }
+
+    // Android install prompt
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowAndroidButton(true);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+
+    // Detect standalone mode
+    const standalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone === true;
+    setIsStandalone(standalone);
+
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const installAndroid = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    setDeferredPrompt(null);
+    setShowAndroidButton(false);
+    setSuccess(true);
+  };
+
+  const installIOS = () => {
+    alert(
+      "On iPhone:\n\n1. Tap Share in Safari\n2. Tap 'Add to Home Screen'\n3. MAD Madison installs instantly"
+    );
+    setSuccess(true);
+  };
+
   return (
-    <main className="min-h-screen bg-black text-white">
-
-      {/* HERO – MADISON HOLOGRAM OPERATOR */}
-      <section className="relative w-full py-28 px-6 overflow-hidden">
-
-        {/* Hologram background */}
-        <div className="absolute inset-0 bg-black">
-          <div className="absolute inset-0 opacity-25 bg-[radial-gradient(circle_at_center,#00E5FF33,#000000)]" />
-          <div className="absolute inset-0 opacity-20 bg-[linear-gradient(135deg,#00E5FF22_0%,transparent_40%,#00E5FF22_80%,transparent_100%)]" />
-          <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_bottom,#00E5FF11,transparent)]" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-[1.2fr,1fr] gap-16 items-center">
-
-          {/* LEFT: Madison intro text */}
-          <div>
-            <p className="text-sm tracking-[0.3em] uppercase text-teal-300/70">
-              MADISON AI OPERATOR
-            </p>
-
-            <h1 className="mt-3 text-6xl font-bold text-teal-200 drop-shadow-[0_0_30px_#00E5FF]">
-              Your Holographic AI System.
-            </h1>
-
-            <p className="mt-5 text-xl text-gray-300 max-w-xl">
-              Madison sits at the center of your automation universe — watching,
-              analyzing, and executing tasks with futuristic precision.
-            </p>
-
-            <div className="mt-10 flex flex-wrap gap-4">
-              <button
-                className="
-                  px-10 py-4 rounded-xl font-semibold
-                  bg-teal-400 text-black
-                  hover:bg-teal-300 active:bg-teal-500
-                  shadow-[0_0_30px_#00E5FF]
-                "
-              >
-                Launch Madison
-              </button>
-
-              <button
-                className="
-                  px-10 py-4 rounded-xl font-semibold
-                  border border-teal-400/60
-                  text-teal-200
-                  bg-black/40
-                  hover:bg-teal-400/10
-                "
-              >
-                View Control Room
-              </button>
-            </div>
+    <main
+      style={{
+        minHeight: "100vh",
+        background:
+          "radial-gradient(circle at top, #00e6e6 0%, #000000 55%, #000000 100%)",
+        color: "#ffffff",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: "32px 16px 80px",
+      }}
+    >
+      {/* PWA Banner */}
+      {!isStandalone && bannerVisible && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            background:
+              "radial-gradient(circle at top, #00e6e6 0%, #000000 55%, #001b1f 100%)",
+            color: "#ffffff",
+            padding: "12px 18px",
+            borderRadius: "18px",
+            boxShadow: "0 0 25px rgba(0, 230, 230, 0.7)",
+            border: "1px solid rgba(0, 230, 230, 0.8)",
+            fontSize: "14px",
+            maxWidth: "420px",
+            zIndex: 50,
+            animation: "madGlow 2.5s infinite alternate",
+          }}
+        >
+          <div style={{ marginBottom: "8px", fontWeight: 600 }}>
+            Install MAD Madison to your Home Screen
           </div>
-
-          {/* RIGHT: Hologram Madison at futuristic desk */}
-          <div className="flex justify-center lg:justify-end">
-            <div className="relative w-80 h-80 md:w-[22rem] md:h-[22rem]">
-
-              {/* Hologram aura */}
-              <div
-                className="
-                  absolute inset-0 rounded-full
-                  bg-[radial-gradient(circle,#00E5FF66,#000000)]
-                  shadow-[0_0_55px_#00E5FF]
-                  opacity-80
-                "
-              />
-
-              {/* Madison hologram silhouette */}
-              <div
-                className="
-                  absolute inset-8 rounded-full
-                  border border-teal-300/70
-                  bg-black/60
-                  backdrop-blur-xl
-                  flex items-center justify-center
-                  animate-pulse
-                "
-              >
-                <div className="w-28 h-28 rounded-full border border-teal-300/60 bg-gradient-to-b from-teal-300/60 to-black/80" />
-              </div>
-
-              {/* Futuristic rounded desk */}
-              <div
-                className="
-                  absolute -bottom-14 left-1/2 -translate-x-1/2
-                  w-72 h-24
-                  rounded-full
-                  bg-black/80
-                  border border-teal-400/60
-                  shadow-[0_0_45px_#00E5FF]
-                  flex items-center justify-center
-                "
-              >
-                <div className="w-60 h-12 rounded-full bg-gradient-to-r from-teal-400/40 via-black to-teal-400/40" />
-              </div>
-            </div>
+          <div style={{ fontSize: "13px", opacity: 0.85, marginBottom: "10px" }}>
+            Android: tap the teal install button.  
+            iPhone: Share → Add to Home Screen.
           </div>
+          <button
+            onClick={() => setBannerVisible(false)}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "#00e6e6",
+              fontWeight: 600,
+              cursor: "pointer",
+              fontSize: "13px",
+            }}
+          >
+            Dismiss
+          </button>
         </div>
-      </import MadisonChat from "./components/MadisonChat";
+      )}
+
+      {/* Title */}
+      <section
+        style={{
+          maxWidth: "720px",
+          textAlign: "center",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: "32px",
+            fontWeight: 800,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            marginBottom: "12px",
+          }}
+        >
+          MAD MADISON AI
+        </h1>
+        <p
+          style={{
+            fontSize: "15px",
+            opacity: 0.85,
+            marginBottom: "24px",
+          }}
+        >
+          Unified black + teal holographic operator.  
+          Install MAD Madison directly to your Home Screen—no stores.
+        </p>
+      </section>
+
+      {/* Holographic Operator */}
+      <div
+        style={{
+          marginTop: "32px",
+          width: "260px",
+          height: "260px",
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle at top, rgba(0,230,230,0.9) 0%, #001b1f 45%, #000000 100%)",
+          boxShadow: "0 0 40px rgba(0,230,230,0.9)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+          overflow: "hidden",
+          animation: "madOrbFloat 4s infinite alternate",
+        }}
+      >
+        <div
+          style={{
+            width: "70%",
+            height: "70%",
+            borderRadius: "50%",
+            border: "1px solid rgba(0,230,230,0.7)",
+            boxShadow: "0 0 25px rgba(0,230,230,0.8)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "14px",
+            fontWeight: 700,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: "#ffffff",
+            textAlign: "center",
+          }}
+        >
+          MAD  
+          <br />
+          OPERATOR
+        </div>
+      </div>
+
+      {/* PWA Buttons */}
+      <div
+        style={{
+          marginTop: "40px",
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "16px",
+        }}
+      >
+        {showAndroidButton && (
+          <button
+            onClick={installAndroid}
+            style={{
+              background:
+                "radial-gradient(circle at top, #00e6e6 0%, #004b4f 45%, #000000 100%)",
+              color: "#000",
+              padding: "16px 24px",
+              borderRadius: "16px",
+              fontSize: "18px",
+              fontWeight: 700,
+              width: "90%",
+              maxWidth: "420px",
+              border: "1px solid #00e6e6",
+              boxShadow: "0 0 22px rgba(0, 230, 230, 0.8)",
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              animation: "madButtonPulse 2s infinite alternate",
+            }}
+          >
+            Install MAD Madison (Android)
+          </button>
+        )}
+
+        <button
+          onClick={installIOS}
+          style={{
+            background:
+              "linear-gradient(135deg, #0bbcc9 0%, #00e6e6 40%, #004b4f 100%)",
+            color: "#ffffff",
+            padding: "16px 24px",
+            borderRadius: "16px",
+            fontSize: "18px",
+            fontWeight: 700,
+            width: "90%",
+            maxWidth: "420px",
+            border: "1px solid rgba(0, 230, 230, 0.9)",
+            boxShadow: "0 0 22px rgba(0, 230, 230, 0.9)",
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+            animation: "madButtonPulse 2s infinite alternate",
+          }}
+        >
+          Install on iPhone (Add to Home Screen)
+        </button>
+
+        {success && (
+          <div
+            style={{
+              marginTop: "20px",
+              padding: "14px 20px",
+              background:
+                "radial-gradient(circle, #00e6e6 0%, #004b4f 60%, #000000 100%)",
+              borderRadius: "16px",
+              boxShadow: "0 0 22px rgba(0, 230, 230, 0.9)",
+              fontSize: "14px",
+              fontWeight: 600,
+            }}
+          >
+            MAD Madison is now installed on your Home Screen.
+          </div>
+        )}
+      </div>
+
+      {/* Animations */}
+      <style>{`
+        @keyframes madGlow {
+          0% { box-shadow: 0 0 10px rgba(0, 230, 230, 0.4); transform: translateX(-50%) translateY(0); }
+          100% { box-shadow: 0 0 30px rgba(0, 230, 230, 0.9); transform: translateX(-50%) translateY(-2px); }
+        }
+
+        @keyframes madButtonPulse {
+          0% { transform: scale(1); box-shadow: 0 0 12px rgba(0, 230, 230, 0.5); }
+          100% { transform: scale(1.03); box-shadow: 0 0 26px rgba(0, 230, 230, 1); }
+        }
+
+        @keyframes madOrbFloat {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-6px); }
+        }
+      `}</style>
+    </main>
+  );
+}
