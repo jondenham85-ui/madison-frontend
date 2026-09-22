@@ -1,173 +1,130 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root {
+  --mad-bg: #000000;
+  --mad-teal: #00e6e6;
+  --mad-teal-soft: #0bbcc9;
+  --mad-grid-line: rgba(0, 230, 230, 0.12);
+  --mad-grid-glow: rgba(0, 230, 230, 0.35);
+  --mad-text: #ffffff;
+}
 
-/* -------------------------------------------------- */
-/* MADISON HOLOGRAM THEME — FULL GLOBALS.CSS          */
-/* -------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-/* Base reset enhancements */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
-  background: #000;
-  color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  height: 100%;
 }
 
-/* -------------------------------------------------- */
-/* HOLOGRAM GLOW EFFECTS                              */
-/* -------------------------------------------------- */
-
-.hologram-glow {
-  box-shadow: 0 0 25px #00e5ff;
+body.mad-body {
+  background: var(--mad-bg);
+  color: var(--mad-text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  overflow: hidden;
 }
 
-.hologram-glow-strong {
-  box-shadow: 0 0 45px #00e5ff;
+.mad-body-inner {
+  position: relative;
+  min-height: 100vh;
+  overflow-y: auto;
 }
 
-/* -------------------------------------------------- */
-/* HOLOGRAM PULSE                                     */
-/* -------------------------------------------------- */
+/* Animated background grid */
 
-@keyframes holoPulse {
-  0% { opacity: 0.65; }
-  50% { opacity: 1; }
-  100% { opacity: 0.65; }
-}
-
-.holo-pulse {
-  animation: holoPulse 2.5s infinite ease-in-out;
-}
-
-/* -------------------------------------------------- */
-/* HOLOGRAM FLICKER                                   */
-/* -------------------------------------------------- */
-
-@keyframes holoFlicker {
-  0% { opacity: 1; }
-  50% { opacity: 0.85; }
-  100% { opacity: 1; }
-}
-
-.holo-flicker {
-  animation: holoFlicker 4s infinite;
-}
-
-/* -------------------------------------------------- */
-/* PARTICLE SHIMMER                                   */
-/* -------------------------------------------------- */
-
-@keyframes shimmer {
-  0% { opacity: 0.2; }
-  50% { opacity: 0.4; }
-  100% { opacity: 0.2; }
-}
-
-.shimmer {
-  animation: shimmer 6s infinite;
-}
-
-/* -------------------------------------------------- */
-/* HOLOGRAM GRID BACKGROUND                           */
-/* -------------------------------------------------- */
-
-.hologram-grid {
-  background-image:
-    linear-gradient(#00e5ff22 1px, transparent 1px),
-    linear-gradient(90deg, #00e5ff22 1px, transparent 1px);
+.mad-grid-background {
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(
+      to right,
+      var(--mad-grid-line) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, var(--mad-grid-line) 1px, transparent 1px);
   background-size: 40px 40px;
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+  animation: madGridDrift 18s linear infinite;
 }
 
-/* -------------------------------------------------- */
-/* BLACK GLASS PANELS                                 */
-/* -------------------------------------------------- */
-
-.glass-panel {
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(18px);
-  border: 1px solid rgba(0, 229, 255, 0.35);
-  box-shadow: 0 0 25px #00e5ff33;
+@keyframes madGridDrift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-40px, -40px, 0);
+  }
 }
 
-/* -------------------------------------------------- */
-/* NEON TEXT                                           */
-/* -------------------------------------------------- */
+/* Neon glow helpers */
 
-.neon-text {
-  color: #00e5ff;
-  text-shadow: 0 0 15px #00e5ff;
+.mad-neon-card {
+  background: radial-gradient(circle at top, #001b1f 0%, #000000 55%);
+  border-radius: 20px;
+  border: 1px solid rgba(0, 230, 230, 0.4);
+  box-shadow: 0 0 24px rgba(0, 230, 230, 0.6);
 }
 
-/* -------------------------------------------------- */
-/* NEON BORDER                                         */
-/* -------------------------------------------------- */
-
-.neon-border {
-  border: 1px solid #00e5ff;
-  box-shadow: 0 0 20px #00e5ff;
+.mad-neon-border {
+  border-radius: 16px;
+  border: 1px solid rgba(0, 230, 230, 0.7);
+  box-shadow: 0 0 18px rgba(0, 230, 230, 0.8);
 }
 
-/* -------------------------------------------------- */
-/* BUTTON GLOW                                         */
-/* -------------------------------------------------- */
+/* Animations */
 
-.btn-glow {
-  box-shadow: 0 0 25px #00e5ff;
+@keyframes madGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(0, 230, 230, 0.4);
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    box-shadow: 0 0 30px rgba(0, 230, 230, 0.9);
+    transform: translateX(-50%) translateY(-2px);
+  }
 }
 
-.btn-glow:hover {
-  box-shadow: 0 0 35px #00e5ff;
+@keyframes madButtonPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 12px rgba(0, 230, 230, 0.5);
+  }
+  100% {
+    transform: scale(1.03);
+    box-shadow: 0 0 26px rgba(0, 230, 230, 1);
+  }
 }
 
-/* -------------------------------------------------- */
-/* FUTURISTIC DESK REFLECTION                          */
-/* -------------------------------------------------- */
-
-.desk-reflect {
-  background: linear-gradient(
-    to right,
-    rgba(0, 229, 255, 0.4),
-    rgba(0, 0, 0, 0.8),
-    rgba(0, 229, 255, 0.4)
-  );
+@keyframes madOrbFloat {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-6px);
+  }
 }
 
-/* -------------------------------------------------- */
-/* HOLOGRAM AURA                                       */
-/* -------------------------------------------------- */
-
-.holo-aura {
-  background: radial-gradient(circle, #00e5ff66, #000000);
-  box-shadow: 0 0 55px #00e5ff;
+@keyframes madSplashFade {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-/* -------------------------------------------------- */
-/* AVATAR SILHOUETTE                                   */
-/* -------------------------------------------------- */
-
-.holo-avatar {
-  border: 1px solid rgba(0, 229, 255, 0.7);
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(20px);
-}
-
-/* -------------------------------------------------- */
-/* CUSTOM SCROLLBAR                                    */
-/* -------------------------------------------------- */
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #00e5ff55;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #000;
+@keyframes madSpinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
