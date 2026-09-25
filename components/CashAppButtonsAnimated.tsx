@@ -1,34 +1,49 @@
 "use client";
 
-export default function CashAppButtons() {
+export default function CashAppButtonsAnimated() {
   return (
     <div style={{ padding: "20px" }}>
       <style>{`
+        @keyframes neonPulse {
+          0% {
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4),
+                        0 0 30px rgba(0, 229, 255, 0.2);
+          }
+          50% {
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.8),
+                        0 0 45px rgba(0, 229, 255, 0.4);
+          }
+          100% {
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4),
+                        0 0 30px rgba(0, 229, 255, 0.2);
+          }
+        }
+
         .cash-button,
         .cash-sub {
           display: inline-block;
-          padding: 12px 22px;
-          margin: 10px 0;
-          border-radius: 10px;
-          font-size: 1rem;
-          font-weight: 600;
+          padding: 14px 26px;
+          margin: 12px 0;
+          border-radius: 12px;
+          font-size: 1.05rem;
+          font-weight: 700;
           text-align: center;
           text-decoration: none;
           background: linear-gradient(135deg, #00e5ff, #0099cc);
           color: #000;
-          box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+          animation: neonPulse 2.2s infinite ease-in-out;
           transition: all 0.25s ease;
         }
 
         .cash-button:hover,
         .cash-sub:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 0 30px rgba(0, 229, 255, 0.8);
+          transform: translateY(-4px) scale(1.03);
+          filter: brightness(1.15);
         }
 
         .cash-button:active,
         .cash-sub:active {
-          transform: scale(0.97);
+          transform: scale(0.96);
         }
       `}</style>
 
@@ -77,3 +92,4 @@ export default function CashAppButtons() {
     </div>
   );
 }
+
