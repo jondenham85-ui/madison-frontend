@@ -38,9 +38,7 @@ export default function Home() {
         utter.volume = 1;
         window.speechSynthesis.speak(utter);
         setVoicePlayed(true);
-      } catch {
-        // fail silently
-      }
+      } catch {}
     }
   }, [bootComplete, timeOfDay, voicePlayed]);
 
@@ -62,7 +60,6 @@ export default function Home() {
           bootComplete ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
-        {/* Header */}
         <header className="flex items-center justify-between px-6 pt-6 md:px-10">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl bg-mad-teal/20 border border-mad-teal/40 flex items-center justify-center mad-pulse">
@@ -100,10 +97,8 @@ export default function Home() {
           </button>
         </header>
 
-        {/* Hero */}
         <section className="flex-1 px-6 pb-10 pt-10 md:px-10 md:pt-14">
           <div className="grid gap-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] items-center">
-            {/* Left */}
             <div className="space-y-8">
               <div className="inline-flex items-center gap-2 rounded-full border border-mad-teal/40 bg-mad-black/60 px-4 py-1 text-[0.7rem] uppercase tracking-[0.2em] text-mad-teal/80 mad-chip">
                 <span className="h-1.5 w-1.5 rounded-full bg-mad-teal mad-dot" />
@@ -119,12 +114,10 @@ export default function Home() {
                 <p className="max-w-xl text-sm md:text-base text-mad-muted mad-hero-body">
                   MAD Madison AI is your unified operator—running chat, revenue
                   automations, ShopMAD, campaigns, and app builds from a single
-                  holographic surface. Every tap routes through Madison’s
-                  backend brain.
+                  holographic surface.
                 </p>
               </div>
 
-              {/* Status cards */}
               <div className="grid gap-4 md:grid-cols-3 mad-status-grid">
                 <div className="mad-card">
                   <div className="mad-card-header">
@@ -132,8 +125,7 @@ export default function Home() {
                     <span className="mad-card-title">Revenue Loop</span>
                   </div>
                   <p className="mad-card-body">
-                    Morning summaries, weekly reports, and Alison’s daily
-                    revenue feed—already wired into Madison.
+                    Morning summaries, weekly reports, and Alison’s daily feed.
                   </p>
                 </div>
 
@@ -144,7 +136,7 @@ export default function Home() {
                   </div>
                   <p className="mad-card-body">
                     Railway deployment live. Plug in Replicate, Redis, Neon,
-                    and PayPal to unlock full pipeline.
+                    and PayPal.
                   </p>
                 </div>
 
@@ -154,13 +146,11 @@ export default function Home() {
                     <span className="mad-card-title">Owner Lock</span>
                   </div>
                   <p className="mad-card-body">
-                    Authentication bound to Jon + Alison. No external operators
-                    inside the grid.
+                    Authentication bound to Jon + Alison.
                   </p>
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="flex flex-wrap gap-3 pt-2 mad-action-row">
                 <button className="mad-primary-button">
                   <span className="mad-primary-glow" />
@@ -181,13 +171,11 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: hologram */}
             <div id="madison" className="relative flex items-center justify-center mad-hologram-wrap">
               <HologramMadison timeOfDay={timeOfDay} />
             </div>
           </div>
 
-          {/* Lower sections */}
           <section className="mt-12 grid gap-6 md:grid-cols-3 mad-section-grid">
             <div id="chat" className="mad-section-card">
               <div className="mad-section-header">
@@ -195,9 +183,7 @@ export default function Home() {
                 <span className="mad-section-tag">Backend‑powered</span>
               </div>
               <p className="mad-section-body">
-                Unified chat surface wired to your backend routes. Every
-                conversation can trigger automations, campaigns, or ShopMAD
-                flows.
+                Unified chat surface wired to backend routes.
               </p>
             </div>
 
@@ -207,8 +193,7 @@ export default function Home() {
                 <span className="mad-section-tag">Live</span>
               </div>
               <p className="mad-section-body">
-                Revenue loops, notifications, and operator updates run on a
-                schedule—Madison keeps you and Alison in the grid.
+                Revenue loops, notifications, operator updates.
               </p>
             </div>
 
@@ -218,13 +203,11 @@ export default function Home() {
                 <span className="mad-section-tag">Dynamic</span>
               </div>
               <p className="mad-section-body">
-                Product system + admin panel ready to connect Cash App, Square,
-                or Stripe. Madison treats every product as an automation node.
+                Product system + admin panel ready for Cash App, Square, Stripe.
               </p>
             </div>
           </section>
 
-          {/* Console strip */}
           <section
             id="console"
             className="mt-10 rounded-2xl border border-mad-teal/30 bg-mad-black/70 px-5 py-4 mad-console"
@@ -237,23 +220,19 @@ export default function Home() {
                     Madison System Console
                   </span>
                   <span className="text-[0.7rem] text-mad-muted">
-                    Frontend hologram ready. Backend routes connect when you
-                    deploy mad-madison-ai.
+                    Frontend hologram ready. Backend connects when deployed.
                   </span>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
                 <button className="mad-console-button">Deploy Backend</button>
                 <button className="mad-console-button">Add API Keys</button>
-                <button className="mad-console-button">
-                  Wire Voice Assistant
-                </button>
+                <button className="mad-console-button">Wire Voice Assistant</button>
               </div>
             </div>
           </section>
         </section>
 
-        {/* Footer */}
         <footer className="px-6 pb-6 pt-4 md:px-10 text-[0.7rem] text-mad-muted flex items-center justify-between">
           <span>© {new Date().getFullYear()} MAD Madison AI • Jon & Alison</span>
           <span className="uppercase tracking-[0.2em]">
@@ -264,3 +243,4 @@ export default function Home() {
     </main>
   );
 }
+
