@@ -5,6 +5,7 @@ import HologramMadison from "@/components/HologramMadison";
 import BootSequence from "@/components/BootSequence";
 import ParticleField from "@/components/ParticleField";
 import GridBackground from "@/components/GridBackground";
+import MadisonChat from "@/components/MadisonChat";
 
 const navItems = [
   { label: "Madison", href: "#madison" },
@@ -176,15 +177,10 @@ export default function Home() {
             </div>
           </div>
 
+          {/* ⭐ FULL MADISON CHAT UI */}
           <section className="mt-12 grid gap-6 md:grid-cols-3 mad-section-grid">
-            <div id="chat" className="mad-section-card">
-              <div className="mad-section-header">
-                <span className="mad-section-title">Madison Chat</span>
-                <span className="mad-section-tag">Backend‑powered</span>
-              </div>
-              <p className="mad-section-body">
-                Unified chat surface wired to backend routes.
-              </p>
+            <div id="chat" className="mad-section-card p-4">
+              <MadisonChat />
             </div>
 
             <div id="automation" className="mad-section-card">
