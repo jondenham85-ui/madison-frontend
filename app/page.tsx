@@ -176,7 +176,7 @@ const loadProducts = async () => {
     console.error("Failed to load products:", err);
   }
 };
-Cannot find name 'backend'
+
 
   // Initial data loads after boot
   useEffect(() => {
