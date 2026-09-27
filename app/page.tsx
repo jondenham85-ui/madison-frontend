@@ -1,6 +1,6 @@
-const backend =
-  process.env.NEXT_PUBLIC_BACKEND_URL || https://madison-frontend-c4osifxi9-jondenham85-uis-projects.vercel.app
 "use client";
+const backend = process.env.NEXT_PUBLIC_BACKEND_URL || "https://madison-backend.onrender.com";
+
 import { useEffect, useState } from "react";
 import HologramMadison from "@/components/HologramMadison";
 import BootSequence from "@/components/BootSequence";
