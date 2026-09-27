@@ -7,6 +7,9 @@ import ParticleField from "@/components/ParticleField";
 import GridBackground from "@/components/GridBackground";
 import MadisonChat from "@/components/MadisonChat";
 
+// BACKEND OPERATOR IMPORTS
+import { operator, systemCheck, runCode } from "@/lib/madisonApi";
+
 const navItems = [
   { label: "Madison", href: "#madison" },
   { label: "Chat", href: "#chat" },
@@ -204,6 +207,7 @@ export default function Home() {
             </div>
           </section>
 
+          {/* ⭐ BACKEND‑CONNECTED OPERATOR CONSOLE */}
           <section
             id="console"
             className="mt-10 rounded-2xl border border-mad-teal/30 bg-mad-black/70 px-5 py-4 mad-console"
@@ -216,14 +220,32 @@ export default function Home() {
                     Madison System Console
                   </span>
                   <span className="text-[0.7rem] text-mad-muted">
-                    Frontend hologram ready. Backend connects when deployed.
+                    Frontend hologram ready. Backend connected.
                   </span>
                 </div>
               </div>
+
               <div className="flex flex-wrap gap-2">
-                <button className="mad-console-button">Deploy Backend</button>
-                <button className="mad-console-button">Add API Keys</button>
-                <button className="mad-console-button">Wire Voice Assistant</button>
+                <button
+                  className="mad-console-button"
+                  onClick={() => operator("deploy full-system")}
+                >
+                  Deploy Backend
+                </button>
+
+                <button
+                  className="mad-console-button"
+                  onClick={() => systemCheck()}
+                >
+                  System Check
+                </button>
+
+                <button
+                  className="mad-console-button"
+                  onClick={() => runCode("console.log('Madison online')")}
+                >
+                  Run Code
+                </button>
               </div>
             </div>
           </section>
@@ -239,4 +261,3 @@ export default function Home() {
     </main>
   );
 }
-
