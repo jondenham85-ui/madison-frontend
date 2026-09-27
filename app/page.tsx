@@ -668,3 +668,122 @@ export default function Home() {
     </main>
   );
 }
+  /* ---------------------------------------------
+     PART 13 — MADISON INTERACTIVE HOLOGRAM ENGINE
+  ----------------------------------------------*/
+
+  useEffect(() => {
+    const holo = document.getElementById("madison");
+    if (!holo) return;
+
+    // Cursor tilt
+    const handleMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * -20;
+
+      holo.style.setProperty("--tilt-x", `${y}deg`);
+      holo.style.setProperty("--tilt-y", `${x}deg`);
+
+      holo.classList.add("mad-hologram-tilt");
+    };
+
+    // Scroll pulse
+    const handleScroll = () => {
+      holo.classList.add("mad-hologram-scroll");
+      setTimeout(() => holo.classList.remove("mad-hologram-scroll"), 600);
+    };
+
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Voice-reactive hologram breathing
+  const triggerVoicePulse = () => {
+    const holo = document.getElementById("madison");
+    if (!holo) return;
+
+    holo.classList.add("mad-hologram-voice");
+    setTimeout(() => holo.classList.remove("mad-hologram-voice"), 300);
+  };
+  /* ---------------------------------------------
+     PART 13B — MADISON VOICE COMMAND ENGINE
+  ----------------------------------------------*/
+
+  const runOperatorCommand = async (cmd: string) => {
+    const normalized = cmd.toLowerCase();
+    addLog("command", cmd);
+
+    if (normalized.includes("deploy")) return deployBackend();
+    if (normalized.includes("check")) return runSystemCheck();
+    if (normalized.includes("revenue")) return scheduleLoop("daily-revenue");
+    if (normalized.includes("weekly")) return scheduleLoop("weekly-report");
+    if (normalized.includes("engine")) return loadEngineStatus();
+    if (normalized.includes("products")) return loadProducts();
+    if (normalized.includes("status")) return loadSystemStatus();
+    if (normalized.includes("notifications")) return loadNotifications();
+
+    addLog("error", `Unknown command: ${cmd}`);
+  };
+
+  const startVoice = () => {
+    const recognition = new (window as any).webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onresult = (e: any) => {
+      const transcript = e.results[0][0].transcript;
+      triggerVoicePulse();
+      runOperatorCommand(transcript);
+    };
+
+    recognition.start();
+  };
+  /* ---------------------------------------------
+     PART 13C — OPERATOR KEYBOARD SHORTCUTS
+  ----------------------------------------------*/
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "c") runOperatorCommand("open console");
+      if (e.key === "r") runSystemCheck();
+      if (e.key === "d") runOperatorCommand("deploy full-system");
+      if (e.key === "v") startVoice();
+      if (e.key === "s") scheduleLoop("daily-revenue");
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
+  /* ---------------------------------------------
+     PART 14 — MADISON OPERATOR TERMINAL MODE
+  ----------------------------------------------*/
+
+  const [terminalOpen, setTerminalOpen] = useState(false);
+  const [terminalInput, setTerminalInput] = useState("");
+  const [terminalHistory, setTerminalHistory] = useState<string[]>([]);
+
+  const toggleTerminal = () => {
+    setTerminalOpen((prev) => !prev);
+  };
+  const runTerminalCommand = async () => {
+    if (!terminalInput.trim()) return;
+
+    setTerminalHistory((prev) => [...prev, `> ${terminalInput}`]);
+
+    await runOperatorCommand(terminalInput);
+
+    setTerminalInput("");
+  };
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "`") toggleTerminal(); // Toggle terminal
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
