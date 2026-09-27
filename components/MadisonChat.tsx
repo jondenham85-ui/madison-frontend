@@ -15,11 +15,14 @@ export default function MadisonChat() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/chat`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message }),
+        }
+      );
 
       const data = await res.json();
 
@@ -83,3 +86,4 @@ export default function MadisonChat() {
     </div>
   );
 }
+
