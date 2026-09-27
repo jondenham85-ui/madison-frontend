@@ -1,3 +1,5 @@
+const backend =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "https://YOUR-BACKEND-URL";    
 "use client";
 
 import { useEffect, useState } from "react";
