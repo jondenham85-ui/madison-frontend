@@ -6,7 +6,7 @@ export default function WorkflowsPage() {
   const [workflows, setWorkflows] = useState<any>(null);
 
   useEffect(() => {
-    fetch("/api/owner", {
+    fetch("https://madison-backend-7lvr.onrender.com/api/owner", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: "jondenham85@gmail.com" })
@@ -17,7 +17,9 @@ export default function WorkflowsPage() {
 
   return (
     <DashboardLayout title="Workflows">
-      {!workflows ? <div>Loading...</div> : (
+      {!workflows ? (
+        <div>Loading...</div>
+      ) : (
         <Panel title="Workflows">
           <pre>{JSON.stringify(workflows, null, 2)}</pre>
         </Panel>
