@@ -6,7 +6,7 @@ export default function SubscriberPage() {
   const [products, setProducts] = useState<any>(null);
 
   useEffect(() => {
-    fetch("/api/owner", {
+    fetch("https://madison-backend-7lvr.onrender.com/api/owner", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: "jondenham85@gmail.com" })
@@ -17,7 +17,9 @@ export default function SubscriberPage() {
 
   return (
     <DashboardLayout title="Subscriber Dashboard">
-      {!products ? <div>Loading...</div> : (
+      {!products ? (
+        <div>Loading...</div>
+      ) : (
         <Panel title="Available Products">
           <pre>{JSON.stringify(products, null, 2)}</pre>
         </Panel>
