@@ -12,11 +12,6 @@ import MadisonOpsPage from "@/components/MadisonOpsPage";
 import { useEffect } from "react";
 import { syncVoiceLogs } from "@/lib/voiceLogs";
 
-export const metadata = {
-  title: "MAD Madison AI",
-  description: "MAD Madison AI frontend",
-};
-
 export default function RootLayout({ children }) {
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,3 +41,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
