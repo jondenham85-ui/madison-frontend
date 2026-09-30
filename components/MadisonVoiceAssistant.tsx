@@ -1,38 +1,61 @@
 "use client";
 
 import { useState } from "react";
-import { transcribeSpeech, speak } from "@/lib/voicePipeline";
-import { madisonVoice } from "@/lib/madisonVoice";
+import { startContinuousMadison } from "@/lib/continuousListening";
+import HologramMadison from "@/components/HologramMadison";
 
 export default function MadisonVoiceAssistant() {
-  const [thinking, setThinking] = useState(false);
-  const [lastMessage, setLastMessage] = useState("");
+  const [active, setActive] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
+  const [speaker, setSpeaker] = useState<"owner" | "partner">("owner");
 
-  async function activateMadison() {
-    setThinking(true);
-
-    const userSpeech = await transcribeSpeech();
-    setLastMessage(userSpeech);
-
-    const response = await madisonVoice(userSpeech);
-
-    speak(response.result?.summary || "I heard you.");
-
-    setThinking(false);
+  async function toggleMadison() {
+    if (!active) {
+      setActive(true);
+      startContinuousMadison(
+        () => setSpeaking(true),
+        () => setSpeaking(false),
+        speaker
+      );
+    } else {
+      setActive(false);
+      window.location.reload();
+    }
   }
 
   return (
-    <div className="fixed bottom-6 right-6">
-      <button
-        onClick={activateMadison}
-        className="px-6 py-3 bg-teal-500 text-black rounded-full shadow-lg"
-      >
-        {thinking ? "Madison Listening..." : "Talk to Madison"}
-      </button>
+    <>
+      <div className="fixed bottom-6 right-6 space-y-2">
+        <button
+          onClick={toggleMadison}
+          className="px-6 py-3 bg-teal-500 text-black rounded-full shadow-lg"
+        >
+          {active ? "Madison Listening…" : "Activate Madison Voice"}
+        </button>
 
-      <div className="mt-2 text-sm text-gray-400">
-        {lastMessage && `You said: ${lastMessage}`}
+        <div className="flex gap-2 text-xs text-gray-300">
+          <button
+            onClick={() => setSpeaker("owner")}
+            className={`px-3 py-1 rounded-full border ${
+              speaker === "owner" ? "border-teal-400" : "border-gray-600"
+            }`}
+          >
+            Owner
+          </button>
+          <button
+            onClick={() => setSpeaker("partner")}
+            className={`px-3 py-1 rounded-full border ${
+              speaker === "partner" ? "border-teal-400" : "border-gray-600"
+            }`}
+          >
+            Partner
+          </button>
+        </div>
       </div>
-    </div>
+
+      <div className="fixed bottom-6 left-6">
+        <HologramMadison speaking={speaking} />
+      </div>
+    </>
   );
 }
