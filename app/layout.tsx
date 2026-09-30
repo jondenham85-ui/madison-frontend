@@ -1,3 +1,5 @@
+"use client";
+
 import "./globals.css";
 
 import MadisonVoiceAssistant from "@/components/MadisonVoiceAssistant";
@@ -6,6 +8,7 @@ import MadisonEmotionHeatmap from "@/components/MadisonEmotionHeatmap";
 import MadisonSpeakerTimeline from "@/components/MadisonSpeakerTimeline";
 import HologramMadison from "@/components/HologramMadison";
 import MadisonOpsPage from "@/components/MadisonOpsPage";
+
 import { useEffect } from "react";
 import { syncVoiceLogs } from "@/lib/voiceLogs";
 
@@ -15,7 +18,6 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  // Voice log sync (frontend → backend DB)
   useEffect(() => {
     const interval = setInterval(() => {
       syncVoiceLogs();
@@ -28,25 +30,14 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="bg-black text-white">
 
-        {/* MAIN APP CONTENT */}
         {children}
 
-        {/* MADISON OPS PAGE (GLOBAL PANEL) */}
         <MadisonOpsPage />
-
-        {/* MADISON VOICE ASSISTANT */}
         <MadisonVoiceAssistant />
-
-        {/* MADISON CONTROL ROOM */}
         <MadisonControlRoom />
-
-        {/* MADISON EMOTION HEATMAP */}
         <MadisonEmotionHeatmap />
-
-        {/* MADISON MULTI-SPEAKER TIMELINE */}
         <MadisonSpeakerTimeline />
 
-        {/* MADISON 3D HOLOGRAM WITH IDLE ANIMATIONS */}
         <div className="fixed bottom-6 left-6">
           <HologramMadison idle={true} />
         </div>
@@ -55,4 +46,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-
