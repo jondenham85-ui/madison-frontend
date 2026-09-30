@@ -1,21 +1,13 @@
-import { operator } from "@/lib/operatorClient";
-import { addTurn, getHistory } from "./conversation";
+import { getHistory } from "./conversation";
+import { operator } from "./operatorClient";
 
-export async function madisonVoice(
-  inputText: string,
-  speaker: "owner" | "partner" = "owner"
-) {
-  addTurn(speaker, inputText);
+export async function syncVoiceLogs() {
+  const history = getHistory();
 
-  const result = await operator("ceo", {
-    message: inputText,
-    voice: "madison-v1",
-    speaker,
-    history: getHistory(),
+  if (history.length === 0) return;
+
+  await operator("voiceLogs", {
+    logs: history,
+    timestamp: Date.now(),
   });
-
-  return {
-    text: result?.result?.summary || "I heard you.",
-    raw: result
-  };
 }
