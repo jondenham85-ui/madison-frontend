@@ -12,6 +12,9 @@ module.exports = {
         "mad-teal": "#35f5ff",
         "mad-muted": "#7b8b9b",
       },
+      textColor: {
+        neon: "#35f5ff",
+      },
     },
   },
   plugins: [],
