@@ -1,16 +1,19 @@
-import OpenAI from "openai";
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+"use client";
 
-export default async function madisonVoice({ text }) {
-  if (!text) return { audio: null };
+import { useEffect, useState } from "react";
 
-  const response = await client.audio.speech.create({
-    model: "gpt-4o-mini-tts",
-    voice: "alloy",
-    input: text
-  });
+export default function MadisonVoiceAssistant() {
+  const [isListening, setIsListening] = useState(false);
 
-  return {
-    audio: Buffer.from(await response.arrayBuffer())
-  };
+  useEffect(() => {
+    // Voice assistant initialization would go here
+    // This is a placeholder for the voice UI component
+  }, []);
+
+  return (
+    <div className="hidden">
+      {/* Voice assistant UI would render here */}
+      {isListening && <span>Listening...</span>}
+    </div>
+  );
 }
