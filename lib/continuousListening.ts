@@ -1,39 +1,73 @@
-import { whisperTranscribe } from "./transcription";
-import { detectWakeWord } from "./wakeWord";
-import { madisonVoice } from "./madisonVoice";
-import { speak } from "./voicePipeline";
-import { detectEmotion } from "./emotion";
+activeRecorder = new MediaRecorder(activeStream);
 
-export async function startContinuousMadison(
-  onSpeakStart?: () => void,
-  onSpeakEnd?: () => void,
-  speaker: "owner" | "partner" = "owner"
-) {
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  const recorder = new MediaRecorder(stream);
+const recorder = activeRecorder;
+
+const recordChunk = () => {
+  if (!isRunning || recorder.state !== "inactive") {
+    return;
+  }
+
   const chunks: BlobPart[] = [];
 
-  recorder.ondataavailable = (e) => chunks.push(e.data);
+  recorder.ondataavailable = (event) => {
+    if (event.data.size > 0) {
+      chunks.push(event.data);
+    }
+  };
 
   recorder.onstop = async () => {
-    const audioBlob = new Blob(chunks, { type: "audio/webm" });
-    const text = await whisperTranscribe(audioBlob);
-
-    if (detectWakeWord(text)) {
-      const cleaned = text.replace(/madison/gi, "").trim();
-      const response = await madisonVoice(cleaned, speaker);
-      const emotion = detectEmotion(response.text);
-
-      onSpeakStart && onSpeakStart();
-      speak(response.text, emotion);
-      setTimeout(() => onSpeakEnd && onSpeakEnd(), 1500);
+    if (!isRunning) {
+      return;
     }
 
-    chunks.length = 0;
-    recorder.start();
-    setTimeout(() => recorder.stop(), 2000);
+    try {
+      const audioBlob = new Blob(chunks, {
+        type: "audio/webm",
+      });
+
+      const text = await whisperTranscribe(audioBlob);
+
+      if (!isRunning || !text) {
+        return;
+      }
+
+      if (detectWakeWord(text)) {
+        const cleaned = text.replace(/madison/gi, "").trim();
+
+        if (cleaned) {
+          const response = await madisonVoice(cleaned, speaker);
+          const emotion = detectEmotion(response.text);
+
+          onSpeakStart?.();
+
+          try {
+            await speak(response.text, emotion);
+          } finally {
+            onSpeakEnd?.();
+          }
+        }
+      }
+    } catch (error) {
+      console.error(
+        "Madison continuous listening error:",
+        error
+      );
+
+      onSpeakEnd?.();
+    }
+
+    if (isRunning) {
+      recordChunk();
+    }
   };
 
   recorder.start();
-  setTimeout(() => recorder.stop(), 2000);
-}
+
+  stopTimer = setTimeout(() => {
+    if (isRunning && recorder.state === "recording") {
+      recorder.stop();
+    }
+  }, 2000);
+};
+
+recordChunk();
