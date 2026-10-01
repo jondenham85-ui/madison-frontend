@@ -2,12 +2,16 @@ import { getHistory } from "./conversation";
 import { operator } from "./operatorClient";
 
 export async function syncVoiceLogs() {
-  const history = getHistory();
+  try {
+    const history = getHistory();
 
-  if (history.length === 0) return;
+    if (history.length === 0) return;
 
-  await operator("voiceLogs", {
-    logs: history,
-    timestamp: Date.now(),
-  });
+    await operator("voiceLogs", {
+      logs: history,
+      timestamp: Date.now(),
+    });
+  } catch (error) {
+    console.error("Failed to sync voice logs:", error);
+  }
 }
