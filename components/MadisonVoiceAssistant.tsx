@@ -1,17 +1,16 @@
-    await startContinuousMadison(
-      () => setSpeaking(true),
-      () => setSpeaking(false),
-      speaker
-    );
-  } catch (error) {
-    console.error("Madison voice assistant error:", error);
+import OpenAI from "openai";
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    setActive(false);
-    setSpeaking(false);
-  }
-} else {
-  stopContinuousMadison();
+export default async function madisonVoice({ text }) {
+  if (!text) return { audio: null };
 
-  setActive(false);
-  setSpeaking(false);
+  const response = await client.audio.speech.create({
+    model: "gpt-4o-mini-tts",
+    voice: "alloy",
+    input: text
+  });
+
+  return {
+    audio: Buffer.from(await response.arrayBuffer())
+  };
 }
