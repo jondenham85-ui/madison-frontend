@@ -1,2 +1,2 @@
 # madison-frontend
-MAD Madison AI website + PWA”
+MAD Madison AI website + PWA
