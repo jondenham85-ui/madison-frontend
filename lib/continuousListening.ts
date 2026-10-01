@@ -1,135 +1,72 @@
-```ts
-import { whisperTranscribe } from "./transcription";
-import { detectWakeWord } from "./wakeWord";
-import { madisonVoice } from "./madisonVoice";
-import { speak } from "./voicePipeline";
-import { detectEmotion } from "./emotion";
+"use client";
 
-let activeRecorder: MediaRecorder | null = null;
-let activeStream: MediaStream | null = null;
-let stopTimer: ReturnType<typeof setTimeout> | null = null;
-let isRunning = false;
+import { useEffect, useRef, useState } from "react";
 
-export async function startContinuousMadison(
-  onSpeakStart?: () => void,
-  onSpeakEnd?: () => void,
-  speaker: "owner" | "partner" = "owner"
-) {
-  if (isRunning) {
-    return;
-  }
+export function useMadisonContinuousListening() {
+  const [active, setActive] = useState(false);
+  const [madisonAudio, setMadisonAudio] = useState(null);
 
-  if (
-    typeof window === "undefined" ||
-    !navigator.mediaDevices ||
-    !navigator.mediaDevices.getUserMedia
-  ) {
-    throw new Error("Microphone access is not available in this browser.");
-  }
+  const mediaStream = useRef(null);
+  const recorder = useRef(null);
+  const chunks = useRef([]);
 
-  isRunning = true;
+  async function start() {
+    if (active) return;
 
-  try {
-    activeStream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-    });
+    setActive(true);
 
-    activeRecorder = new MediaRecorder(activeStream);
+    mediaStream.current = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recorder.current = new MediaRecorder(mediaStream.current);
 
-    const recorder = activeRecorder;
-
-    const recordChunk = () => {
-      if (!isRunning || recorder.state !== "inactive") {
-        return;
-      }
-
-      const chunks: BlobPart[] = [];
-
-      recorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunks.push(event.data);
-        }
-      };
-
-      recorder.onstop = async () => {
-        if (!isRunning) {
-          return;
-        }
-
-        try {
-          const audioBlob = new Blob(chunks, {
-            type: "audio/webm",
-          });
-
-          const text = await whisperTranscribe(audioBlob);
-
-          if (!isRunning || !text) {
-            return;
-          }
-
-          if (detectWakeWord(text)) {
-            const cleaned = text.replace(/madison/gi, "").trim();
-
-            if (cleaned) {
-              const response = await madisonVoice(cleaned, speaker);
-              const emotion = detectEmotion(response.text);
-
-              onSpeakStart?.();
-
-              try {
-                await speak(response.text, emotion);
-              } finally {
-                onSpeakEnd?.();
-              }
-            }
-          }
-        } catch (error) {
-          console.error("Madison continuous listening error:", error);
-          onSpeakEnd?.();
-        }
-
-        if (isRunning) {
-          recordChunk();
-        }
-      };
-
-      recorder.start();
-
-      stopTimer = setTimeout(() => {
-        if (isRunning && recorder.state === "recording") {
-          recorder.stop();
-        }
-      }, 2000);
+    recorder.current.ondataavailable = (e) => {
+      chunks.current.push(e.data);
     };
 
-    recordChunk();
-  } catch (error) {
-    isRunning = false;
+    recorder.current.onstop = async () => {
+      const blob = new Blob(chunks.current, { type: "audio/webm" });
+      chunks.current = [];
 
-    activeStream?.getTracks().forEach((track) => track.stop());
+      const form = new FormData();
+      form.append("audio", blob);
 
-    activeStream = null;
-    activeRecorder = null;
+      const res = await fetch(
+        process.env.NEXT_PUBLIC_BACKEND_URL + "/operator/task",
+        {
+          method: "POST",
+          body: form
+        }
+      );
 
-    throw error;
+      const data = await res.json();
+
+      if (data.audio) {
+        setMadisonAudio(data.audio);
+      }
+
+      if (active) {
+        recorder.current.start();
+        setTimeout(() => recorder.current.stop(), 3000);
+      }
+    };
+
+    recorder.current.start();
+    setTimeout(() => recorder.current.stop(), 3000);
   }
+
+  function stop() {
+    setActive(false);
+
+    try {
+      recorder.current?.stop();
+      mediaStream.current?.getTracks().forEach((t) => t.stop());
+    } catch (e) {}
+  }
+
+  return {
+    active,
+    start,
+    stop,
+    madisonAudio
+  };
 }
 
-export function stopContinuousMadison() {
-  isRunning = false;
-
-  if (stopTimer) {
-    clearTimeout(stopTimer);
-    stopTimer = null;
-  }
-
-  if (activeRecorder && activeRecorder.state !== "inactive") {
-    activeRecorder.stop();
-  }
-
-  activeStream?.getTracks().forEach((track) => track.stop());
-
-  activeRecorder = null;
-  activeStream = null;
-}
-```
