@@ -1,7 +1,5 @@
 {
-  "build": {
-    "env": {
-      "NODE_ENV": "development"
-    }
-  }
+  "buildCommand": "next build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install"
 }
